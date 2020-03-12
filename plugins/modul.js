@@ -16,12 +16,32 @@ function _createModalFooter(buttons = []){
         $btn.classList.add('btn')
         $btn.classList.add(`btn-${btn.type || 'secondary'}`)
         $btn.onclick = btn.handler || noop
-
         wrap.appendChild($btn)
-
     })
-
     return wrap
+}
+
+
+function _createCard(options) {
+    const cards = document.createElement('div')
+    cards.classList.add('row')
+    options.cats.forEach(e => {
+        cards.insertAdjacentHTML('afterbegin', `
+            <div class="col">
+                <div class="card" >
+                    <img class="card-img-top" style="height: 300px;" src='/Users/alexnik/Desktop/Снимок экрана 2020-03-09 в 21.24.54.png'>
+                    <div class="card-body">
+                        <h5 class="card-title">${e.title || 'No name'}</h5>
+                    </div>
+                </div>
+            </div>
+        `)
+        const buttonCards = _createModalFooter(options.cardsButtons)
+        buttonCards.appendAfter(cards.querySelector('.card-title'))
+    })
+    
+    document.body.appendChild(cards)
+    return cards
 }
 
 
@@ -58,6 +78,7 @@ $.modal = function(options) {
 
     const ANIMATION_SPEED = 200
     const $modal = _createModal(options)
+    const $cards = _createCard(options)
     let clothing = false
     let destroyed = false
 
@@ -85,7 +106,8 @@ $.modal = function(options) {
         }
     }
 
-    $modal.addEventListener('click', listener)
+    $modal.addEventListener('click', listener),
+    window.addEventListener('load', $cards)
 
     return Object.assign(modal, {
         destroy() {
@@ -95,6 +117,7 @@ $.modal = function(options) {
         },
         setContent(html) {
             $modal.querySelector('[data-content]').innerHTML = html
+            // $cards.querySelector('.card-title').innerHTML = html
         }
     })
 }
